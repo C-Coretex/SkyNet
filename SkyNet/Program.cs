@@ -24,6 +24,13 @@ class MainClass
             else
                 stRowCount = 0;
         }
+        stRowCount = 0;
+        for (int i = stones.Length-1; i > stones.Length - 4; --i)
+            if (stones[i])
+                ++stRowCount;
+        if(stRowCount != 3)
+            for (int i = stones.Length - 1; i > stones.Length - 4; --i)
+                stones[i] = false;
     }
 
     public static void Print(bool[] stones)
@@ -152,11 +159,11 @@ class MainClass
             {
                 Delete(newStones);
                 value = Skynet(newStones, 0, !AI);
-            }
-            if (value > BestMove)
-            {
-                BestMove = value;
-                TheMove = count[i];
+                if (value > BestMove)
+                {
+                    BestMove = value;
+                    TheMove = count[i];
+                }
             }
         }
 
@@ -166,7 +173,7 @@ class MainClass
     public static void Main(string[] args)
     {
         //The count of stones
-        int n = 13;
+        int n = 14;
 
         bool[] stones = new bool[n];
         for (uint i = 0; i < n; ++i)
@@ -175,15 +182,6 @@ class MainClass
         Print(stones);
         while (true)
         {
-            Skynet(stones, 0, true);
-            stones[TheMove] = false;
-            Print(stones);
-            if (Check(stones))
-            {
-                Console.WriteLine("The Skynet has been defeated");
-                goto TheEnd;
-            }
-
             Player(stones);
             if (Check(stones))
             {
@@ -193,14 +191,31 @@ class MainClass
 
             BestMove = -999;
             List<int> count = new List<int>();
-            for (int i = 0; i < stones.Length; ++i)
-                if (stones[i])
+            bool[] newStones = new bool[stones.Length];
+
+            for (int j = 0; j < stones.Length; ++j)
+                newStones[j] = stones[j];
+
+            Delete(newStones);
+
+            for (int i = 0; i < newStones.Length; ++i)
+                if (newStones[i])
                 {
                     count.Add(i);
                     goto end;
                 }
             end:
             TheMove = count[0];
+
+            Skynet(stones, 0, true);
+            stones[TheMove] = false;
+            Print(stones);
+            if (Check(stones))
+            {
+                Console.WriteLine("Skynet has been defeated");
+                goto TheEnd;
+            }
+
         }
 
     TheEnd:;
