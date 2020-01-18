@@ -24,13 +24,23 @@ class MainClass
             else
                 stRowCount = 0;
         }
+
         stRowCount = 0;
-        for (int i = stones.Length-1; i > stones.Length - 4; --i)
+        for (int i = stones.Length-1; i >= stones.Length - 7 && i >= 0; --i)
+        {
             if (stones[i])
+            {
                 ++stRowCount;
-        if(stRowCount != 3)
-            for (int i = stones.Length - 1; i > stones.Length - 4; --i)
-                stones[i] = false;
+                for (int j = i; j >= i - (3 - stRowCount) && j < stones.Length; --j)
+                {
+                    if (!stones[j])
+                        for (int o = i; o > j; --o)
+                            stones[o] = false;
+                }
+            }
+            else
+                stRowCount = 0;
+        }
     }
 
     public static void Print(bool[] stones)
@@ -173,7 +183,7 @@ class MainClass
     public static void Main(string[] args)
     {
         //The count of stones
-        int n = 14;
+        int n = 10;
 
         bool[] stones = new bool[n];
         for (uint i = 0; i < n; ++i)
@@ -182,6 +192,16 @@ class MainClass
         Print(stones);
         while (true)
         {
+            Skynet(stones, 0, true);
+            stones[TheMove] = false;
+            Print(stones);
+            if (Check(stones))
+            {
+                Console.WriteLine("Skynet has been defeated");
+                goto TheEnd;
+            }
+
+
             Player(stones);
             if (Check(stones))
             {
@@ -206,16 +226,6 @@ class MainClass
                 }
             end:
             TheMove = count[0];
-
-            Skynet(stones, 0, true);
-            stones[TheMove] = false;
-            Print(stones);
-            if (Check(stones))
-            {
-                Console.WriteLine("Skynet has been defeated");
-                goto TheEnd;
-            }
-
         }
 
     TheEnd:;
